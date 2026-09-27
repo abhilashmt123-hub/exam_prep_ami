@@ -1,0 +1,38 @@
+.option.correct,
+.option.correct:hover,
+.option.correct:focus {
+  background: #e4f7eb;
+  border-color: #26834a;
+  box-shadow: 0 4px 0 #a8d8b7;
+}
+
+.option.incorrect,
+.option.incorrect:hover,
+.option.incorrect:focus {
+  background: #fff0f0;
+  border-color: #c53636;
+  box-shadow: 0 4px 0 #e5aaaa;
+}
+
+.option:disabled {
+  cursor: default;
+}
+
+.option:disabled:hover,
+.option:disabled:focus {
+  transform: none;
+}
+
+.answer-feedback {
+  min-height: 1.5em;
+  margin: -12px 0 20px;
+  font-weight: 700;
+}
+
+.correct-feedback {
+  color: #20743f;
+}
+
+.incorrect-feedback {
+  color: #a52c2c;
+}

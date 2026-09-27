@@ -1,0 +1,13 @@
+services:
+  exam-prep-app:
+    build: .
+    ports:
+      - "3344:3344"
+    environment:
+      PORT: "3344"
+    volumes:
+      - app-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  app-data:
