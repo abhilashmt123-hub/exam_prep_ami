@@ -1,16 +1,22 @@
 // Run with: node scripts/generate-question-bank.js
-// This creates a readable, editable 35-question practice bank from the source questions below.
+// This creates a readable practice bank from the source questions below.
 const fs = require('fs');
 const path = require('path');
 const sections = {};
 const optionAssets = new Map();
-const textOnlySections = new Set(['letters', 'numbers', 'shapes-colours']);
+const textOnlySections = new Set(['letters', 'numbers', 'shapes-colours', 'general-knowledge']);
 const optionAssetsDir = path.join(__dirname, '..', 'assets', 'questions', 'options');
 const customOptionImages = new Map([
   ['peacock', 'peacock.png'],
   ['mahatma gandhi', 'gandhiji.jpeg'],
   ['jawaharlal nehru', 'nehru.jpg'],
-  ['dr. b. r. ambedkar', 'ambedkar.jpg']
+  ['dr. b. r. ambedkar', 'ambedkar.jpg'],
+  ['indira gandhi', 'Indira-Gandhi-ili-50-img-5.jpg'],
+  ['v d satheesan', 'V.D. Satheesan.jpg'],
+  ['raveendranath tagore', 'tagore.jpg'],
+  ['cricket', 'cricket.svg'],
+  ['football', 'football.svg'],
+  ['hockey', 'hockey.svg']
 ]);
 const optionIcons = {
   apple: '🍎', banana: '🍌', mango: '🥭', orange: '🍊', tomato: '🍅', carrot: '🥕',
@@ -143,7 +149,7 @@ const body = [
   ['hold a pencil','Hand','Nose','Toe'], ['chew food','Teeth','Fingers','Eyes'], ['kick a ball','Foot','Ear','Elbow'],
   ['clap','Hands','Eyes','Knees'], ['blink','Eyes','Feet','Nose']
 ];
-body.forEach(([action, correct, one, two], index) => addChoice('body-life', `Which body part helps you to ${action}?`, correct, [one, two], index < 3 ? 'picture-question' : 'text-options'));
+body.forEach(([action, correct, one, two], index) => addChoice('body-life', `Which body part do you use to ${action}?`, correct, [one, two], index < 3 ? 'picture-question' : 'text-options'));
 const life = [
   ['sleep','Bed','Plate','Shoe'], ['brush your teeth','Toothbrush','Pillow','Ball'], ['drink water','Cup','Book','Crayon'],
   ['cut paper safely','Scissors','Spoon','Sock'], ['keep dry in rain','Umbrella','Comb','Pencil'], ['tell time','Clock','Door','Bag'],
@@ -188,7 +194,58 @@ const world = [
   ['is India’s national fruit','Mango','Apple','Orange'], ['is India’s national animal','Tiger','Elephant','Lion'],
   ['is India’s national flag','Tricolour','Rainbow','Red flag'], ['was the first Prime Minister of India','Jawaharlal Nehru','Mahatma Gandhi','Dr. B. R. Ambedkar']
 ];
-world.forEach(([clue, correct, one, two]) => addChoice('world-around-us', `Which one ${clue}?`, correct, [one, two]));
+world.forEach(([clue, correct, one, two]) => {
+  const prompt = clue === 'was the first Prime Minister of India'
+    ? 'Who was the first Prime Minister of India?'
+    : `Which one ${clue}?`;
+  addChoice('world-around-us', prompt, correct, [one, two]);
+});
+[
+  ['Who is the current Prime Minister of India?', 'Narendra Modi', 'Jawaharlal Nehru', 'Mahatma Gandhi'],
+  ['Who is the President of India?', 'Droupadi Murmu', 'Pratibha Patil', 'Indira Gandhi'],
+  ['Who was the first President of India?', 'Dr. Rajendra Prasad', 'Dr. A. P. J. Abdul Kalam', 'Jawaharlal Nehru'],
+  ['Who is the Chief Minister of Kerala?', 'V. D. Satheesan', 'Pinarayi Vijayan', 'K. K. Shailaja'],
+  ['Who was the first Chief Minister of Kerala?', 'E. M. S. Namboodiripad', 'Oommen Chandy', 'V. D. Satheesan'],
+  ['Who was the first woman Prime Minister of India?', 'Indira Gandhi', 'Pratibha Patil', 'Droupadi Murmu'],
+  ['Who was the first woman President of India?', 'Pratibha Patil', 'Indira Gandhi', 'Droupadi Murmu'],
+  ['Which leader was called Chacha Nehru?', 'Jawaharlal Nehru', 'Mahatma Gandhi', 'Subhas Chandra Bose'],
+  ['Which leader was called Netaji?', 'Subhas Chandra Bose', 'Jawaharlal Nehru', 'Sardar Patel'],
+  ['Who is known as the Missile Man of India?', 'A. P. J. Abdul Kalam', 'Jawaharlal Nehru', 'Sardar Patel'],
+  ['Which leader was called the Iron Man of India?', 'Sardar Vallabhbhai Patel', 'Subhas Chandra Bose', 'Rajendra Prasad'],
+  ['Who was the second Prime Minister of India?', 'Lal Bahadur Shastri', 'Jawaharlal Nehru', 'Indira Gandhi'],
+  ['Who wrote the Indian national anthem?', 'Rabindranath Tagore', 'Mahatma Gandhi', 'Jawaharlal Nehru'],
+  ['What is the name of India\'s national anthem?', 'Jana Gana Mana', 'Vande Mataram', 'Saare Jahan Se Achha'],
+  ['What is the capital of India?', 'New Delhi', 'Mumbai', 'Chennai'],
+  ['What is the capital of Kerala?', 'Thiruvananthapuram', 'Kochi', 'Kozhikode'],
+  ['Which country do we live in?', 'India', 'Nepal', 'Japan'],
+  ['What is the money used in India called?', 'Rupee', 'Dollar', 'Pound'],
+  ['In which city is the Taj Mahal?', 'Agra', 'Delhi', 'Mumbai'],
+  ['In which city is the Red Fort?', 'Delhi', 'Kochi', 'Chennai'],
+  ['In which city can you see the Gateway of India?', 'Mumbai', 'Agra', 'Thiruvananthapuram'],
+  ['What are the three main colours on the Indian flag?', 'Saffron, white and green', 'Red, blue and yellow', 'Green, pink and black'],
+  ['What is the national river of India?', 'Ganga', 'Yamuna', 'Godavari'],
+  ['What is the national song of India?', 'Vande Mataram', 'Jana Gana Mana', 'Saare Jahan Se Achha'],
+  ['Which sport is played with a hockey stick?', 'Hockey', 'Cricket', 'Football'],
+  ['Which game does Sachin Tendulkar play?', 'Cricket', 'Football', 'Hockey'],
+  ['Which festival is known as the festival of lights?', 'Diwali', 'Holi', 'Onam'],
+  ['Which festival is known as the festival of colours?', 'Holi', 'Diwali', 'Vishu'],
+  ['When does India celebrate Independence Day?', '15 August', '26 January', '14 November'],
+  ['When does India celebrate Republic Day?', '26 January', '15 August', '2 October'],
+  ['Which language is mainly spoken in Kerala?', 'Malayalam', 'Tamil', 'Hindi'],
+  ['Which festival is celebrated in Kerala?', 'Onam', 'Diwali', 'Holi'],
+  ['What is the special Onam feast called?', 'Onam Sadya', 'Biryani', 'Puttu'],
+  ['What is the flower carpet made for Onam called?', 'Pookkalam', 'Rangoli', 'Kolam'],
+  ['Which Kerala dance is famous for its painted faces?', 'Kathakali', 'Garba', 'Bhangra'],
+  ['What is the state animal of Kerala?', 'Elephant', 'Tiger', 'Lion'],
+  ['Which sea is beside Kerala?', 'Arabian Sea', 'Red Sea', 'Black Sea'],
+  ['Which Kerala hill station is famous for tea gardens?', 'Munnar', 'Alappuzha', 'Kochi'],
+  ['Which Kerala town is famous for houseboat trips?', 'Alappuzha', 'Munnar', 'Palakkad'],
+  ['Where do Kerala houseboats travel?', 'Backwaters', 'Deserts', 'Snowfields'],
+  ['Which state has many backwaters and houseboats?', 'Kerala', 'Punjab', 'Rajasthan'],
+  ['What is a common tree in Kerala?', 'Coconut palm', 'Pine tree', 'Apple tree'],
+  ['Which yellow flower is used during Vishu?', 'Kanikonna', 'Rose', 'Jasmine'],
+  ['What kind of boats race during Kerala festivals?', 'Snake boats', 'Sail planes', 'Fishing carts']
+].forEach(([prompt, correct, one, two]) => addChoice('general-knowledge', prompt, correct, [one, two]));
 // Replaces a broad generic question with a book-aligned India general-knowledge question.
 const nationalQuestion = sections['animals-nature'].findIndex(question => question.prompt.includes('national animal of India'));
 sections['animals-nature'][nationalQuestion] = {
@@ -205,12 +262,13 @@ for (let n = 2; n <= 20; n += 2) addChoice('patterns-logic', `Complete the numbe
 
 const sourceTests = Object.entries(sections).map(([id, questions]) => ({ id, title: id.replace(/-/g, ' '), questions }));
 const sourceTotal = sourceTests.reduce((sum, test) => sum + test.questions.length, 0);
-if (sourceTotal !== 250) throw new Error(`Expected 250 source questions, got ${sourceTotal}`);
+if (sourceTotal !== 294) throw new Error(`Expected 294 source questions, got ${sourceTotal}`);
 const groups = [
   ['general-knowledge', 'gk'],
   ['alphabets', 'alphabets'],
   ['numbers', 'numbers'],
   ['shapes-colours', 'shapes-colours'],
+  ['body-parts', 'body-parts'],
   ['animals-nature', 'animals-nature'],
   ['everyday-world', 'everyday-world'],
   ['logic-reasoning', 'logic-reasoning']
@@ -225,7 +283,9 @@ const isLetterQuestion = prompt => /\bletter\b/i.test(prompt);
 for (const test of sourceTests) {
   for (const question of test.questions) {
     let groupId;
-    if (test.id === 'letters' || (test.id === 'shapes-colours' && isLetterQuestion(question.prompt))) {
+    if (test.id === 'general-knowledge') {
+      groupId = 'general-knowledge';
+    } else if (test.id === 'letters' || (test.id === 'shapes-colours' && isLetterQuestion(question.prompt))) {
       groupId = 'alphabets';
     } else if (test.id === 'numbers') {
       groupId = 'numbers';
@@ -233,6 +293,8 @@ for (const test of sourceTests) {
       groupId = 'shapes-colours';
     } else if (test.id === 'patterns-logic') {
       groupId = 'logic-reasoning';
+    } else if (test.id === 'body-life' && question.prompt.startsWith('Which body part')) {
+      groupId = 'body-parts';
     } else if (test.id === 'body-life') {
       groupId = 'everyday-world';
     } else if (isGeneralKnowledge(question)) {
@@ -259,12 +321,13 @@ const tests = groups.map(({ id, title, prefix, questions }) => {
   if (questions.length < questionsPerGroup) {
     throw new Error(`Expected at least ${questionsPerGroup} questions for ${id}, got ${questions.length}`);
   }
+  const selectedQuestions = shuffle(questions);
   return {
     id, title,
-    questions: shuffle(questions).slice(0, questionsPerGroup).map((question, index) => ({
+    questions: selectedQuestions.map((question, index) => ({
       ...question,
       id: `${prefix}-${index + 1}`,
-      options: id === 'alphabets'
+      options: ['alphabets', 'general-knowledge'].includes(id)
         ? question.options.map(({ text }) => ({ text }))
         : question.options
     }))
@@ -277,11 +340,6 @@ const referencedAssets = new Set(tests.flatMap(test =>
     .map(option => option.image && path.basename(decodeURIComponent(option.image)))
     .filter(Boolean)
 ));
-for (const fileName of fs.readdirSync(optionAssetsDir)) {
-  if (fileName.endsWith('.svg') && !referencedAssets.has(fileName)) {
-    fs.unlinkSync(path.join(optionAssetsDir, fileName));
-  }
-}
 for (const fileName of referencedAssets) {
   const svg = optionAssets.get(fileName);
   const assetPath = path.join(optionAssetsDir, fileName);
@@ -289,4 +347,5 @@ for (const fileName of referencedAssets) {
   else if (!fs.existsSync(assetPath)) throw new Error(`Missing option image: ${assetPath}`);
 }
 fs.writeFileSync(path.join(rootDir, 'data', 'questions.json'), JSON.stringify({ tests }, null, 2) + '\n');
-console.log(`Wrote ${tests.length * questionsPerGroup} questions across ${tests.length} groups and ${referencedAssets.size} local option images.`);
+const questionCount = tests.reduce((sum, test) => sum + test.questions.length, 0);
+console.log(`Wrote ${questionCount} questions across ${tests.length} groups and ${referencedAssets.size} local option images.`);

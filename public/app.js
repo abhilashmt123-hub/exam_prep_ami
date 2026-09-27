@@ -14,9 +14,9 @@ const nav = () => `<nav class="topnav"><a class="link-btn" href="#/">🏠 Home</
 
 async function api(url, options) { const res = await fetch(url, options); if (!res.ok) throw new Error('Something went wrong'); return res.json(); }
 
-async function home(){app.innerHTML=`<section class="panel">${nav()}<div class="celebrate">🌟</div><h1>Talent Exam Practice</h1><p>Ready to play? Every test has 35 questions, with five from each learning area!</p><button class="test-card" id="start">▶ Start a Test<span class="small">A balanced new test every time</span></button></section>`;document.querySelector('#start').onclick=()=>startTest().catch(showError)}
+async function home(){const tests=await api('/api/tests');const balancedCount=tests.length*5;app.innerHTML=`<section class="panel">${nav()}<div class="celebrate">🌟</div><h1>Talent Exam Practice</h1><p>Choose a balanced test or practise one learning area.</p><button class="test-card" id="start">▶ Balanced Test<span class="small">${balancedCount} questions, five from each learning area</span></button><h2>Choose a learning area</h2><div class="test-grid">${tests.map(test=>`<button class="test-card" data-test-id="${esc(test.id)}">${esc(test.title.replace(/\b\w/g, letter=>letter.toUpperCase()))}<span class="small">${test.questionCount} questions</span></button>`).join('')}</div></section>`;document.querySelector('#start').onclick=()=>startTest().catch(showError);document.querySelectorAll('[data-test-id]').forEach(button=>button.onclick=()=>startTest(button.dataset.testId).catch(showError))}
 
-async function startTest(){await takeTest(await api('/api/random-test'))}
+async function startTest(testId){const test=await api(testId?`/api/tests/${encodeURIComponent(testId)}`:'/api/random-test');test.isBalanced=!testId;await takeTest(test)}
 
 async function takeTest(test) {
   let i = 0;
@@ -62,14 +62,14 @@ async function results(test, answers) {
   });
   const message = score === test.questions.length
     ? 'Amazing! Perfect score!'
-    : score >= 7
+    : score >= Math.ceil(test.questions.length * 0.7)
       ? 'Great job! You did so well!'
       : 'Nice try! Practice makes you stronger!';
   app.innerHTML = `<section class="panel">${nav()}<div class="celebrate">${score >= 7 ? '🎉' : '⭐'}</div><h1>Your Score: ${score} / ${test.questions.length}</h1><h2>${message}</h2><button class="next" id="retake">Start another test</button><div class="review">${test.questions.map((question, index) => {
     const correct = answers[index] === question.correctIndex;
     return `<article class="review-item ${correct ? '' : 'wrong'}"><b>${index + 1}. ${esc(question.prompt)}</b><br>Your answer: <span class="answer">${esc(question.options[answers[index]].text)}</span> ${correct ? '✅' : '❌'}${correct ? '' : `<br>Correct answer: <span class="answer">${esc(question.options[question.correctIndex].text)}</span>`}</article>`;
   }).join('')}</div></section>`;
-  document.querySelector('#retake').onclick = () => startTest().catch(showError);
+  document.querySelector('#retake').onclick = () => startTest(test.isBalanced ? null : test.id).catch(showError);
 }
 
 async function history(){const rows=(await api('/api/history')).slice().reverse();app.innerHTML=`<section class="panel">${nav()}<h1>Practice History</h1>${rows.length?`<ul class="history">${rows.map(a=>`<li><b>${esc(a.title||'Practice Test')}</b> — ${a.score}/${a.total}<br><small>${new Date(a.completedAt).toLocaleString()}</small></li>`).join('')}</ul>`:'<p>No attempts yet. Start a test to begin!</p>'}</section>`}
